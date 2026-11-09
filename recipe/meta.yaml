@@ -2,40 +2,48 @@
 {% set version = "1.2.9" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://files.pythonhosted.org/packages/source/{{ name[0] }}/{{ name }}/trame_common-{{ version }}.tar.gz
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_') }}-{{ version }}.tar.gz
   sha256: 65c61b50e0c09ce5fe3a1550fc60fd4818ad4b6db07ccf937cd3850e370eeaf0
 
 build:
-  noarch: python
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: true  # [py<39]
 
 requirements:
   host:
-    - python {{ python_min }}
-    - hatchling
+    - python
     - pip
+    - hatchling
   run:
-    - python >={{ python_min }}
+    - python
 
+# PyPi package has no tests included, use only `pip check`
 test:
   imports:
     - trame_common
   commands:
     - pip check
   requires:
-    - python {{ python_min }}
     - pip
 
 about:
   home: https://github.com/Kitware/trame-common
-  summary: Dependency less classes and functions for trame
   license: Apache-2.0
+  license_family: Apache
   license_file: LICENSE
+  summary: Dependency less classes and functions for trame
+  description: |
+    Trame is rapidly evolving and having a dependency-less package to provide helper functions and classes across trame's eco-system
+    is important for its future health. Initially some of those classes were created inside trame-client,
+    trame-server or even trame, but we reached a point where some of those should become even more mainstream
+    so they could easily be used on server, client, widget and more.
+  dev_url: https://github.com/Kitware/trame-common
+  doc_url: https://github.com/Kitware/trame-common/blob/main/README.md
 
 extra:
   recipe-maintainers:
